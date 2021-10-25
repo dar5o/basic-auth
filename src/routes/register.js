@@ -7,7 +7,7 @@ const { Users } = require('../models/index');
 
 const router = express.Router();
 
-router.post('/register', registerUser);
+router.post('/signup', registerUser);
 
 async function registerUser(req, res) {
   try {
