@@ -11,7 +11,7 @@ const { Users } = require('../models/index');
 
 const router = express.Router();
 
-router.post('/sign-in', decoding, signIn);
+router.post('/signin', decoding, signIn);
 
 async function signIn(req, res) {
   try {
