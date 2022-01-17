@@ -39,5 +39,5 @@ app.use(logger);
 // Export modules
 module.exports = {
   server: app,
-  start: port => app.listen(port, console.log(`Server Up on Port ${port}`))
+  start: port => app.listen(port, console.log(`Server On Port: ${port}`))
 };
