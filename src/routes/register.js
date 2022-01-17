@@ -1,22 +1,22 @@
 'use strict';
 
 const express = require('express');
-const bcrypt = require('bcryptjs');
+const bcrypt = require('bcrypt');
 
-const { Users } = require('../models/index');
+const { User } = require('../models/index.js');
 
 const router = express.Router();
 
-router.post('/signup', registerUser);
+router.post('/signup', signUp);
 
-async function registerUser(req, res) {
-  try {
-    const record = await Users.create(req.body);
-    res.status(200).json(record);
-  } catch (error) { 
-    res.status(403).send('Error Creating User');
-    console.error('Register: ', error);
-  }
+async function signUp(request, response) {
+  let userData = request.body;
+  console.log(userData , 'this is userdata');
+  let newUser = await User.create({
+    username: userData.username,
+    password: userData.password
+  });
+  response.send(newUser);
 }
 
 module.exports = router;
