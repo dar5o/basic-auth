@@ -1,31 +1,34 @@
-'use strict';
+'use strict'; 
 
 const express = require('express');
-const bcrypt = require('bcryptjs');
+const app = express();
 const base64 = require('base-64');
+const bcrypt = require('bcrypt');
+const basicAuth = require('../middleware/decoding.js')
 
-const decoding = require('../middleware/decoding');
-
-
-const { Users } = require('../models/index');
-
+const { User } = require('../models/index.js')
 const router = express.Router();
-
 router.post('/signin', decoding, signIn);
 
-async function signIn(req, res) {
+async function signIn(request, response) {
   try {
-    const user = await Users.findOne({ where: { username: req.body.username } });
-    const valid = await bcrypt.compare(req.body.password, user.dataValues.password);
-    if (valid) {
-      res.status(200).json(user);
+    let authString = request.headers.authorization;
+    let encodedUserPassword = authString.split(' ')[1];
+    let decodedUserPassword = base64.decode(encodedUserPassword);
+    let [ user, password ] = decodedUserPassword.split(':')
+
+    let userQuery = await User.findOne({ where: {
+      username: user
     }
-    else {
-      throw new Error('Invalid User');
+  });
+  let isValidPassword = await bcrypt.compare(password, userQuery.password);
+    if(isValidPassword) {
+      response.send(userQuery);
+    } else {
+      response.status(401).send('Invalid Login');
     }
-  } catch (error) { 
-    res.status(403).send("Invalid Login");
-    console.error('Sign-in: ', error);
+  } catch(error) {
+    response.status(401).send('Invalid Login: Error in request');
   }
 }
 
